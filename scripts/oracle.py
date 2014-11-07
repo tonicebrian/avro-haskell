@@ -10,11 +10,16 @@ from avro.io import DatumReader, DatumWriter
 
 dataDir = os.path.dirname(os.path.realpath(__file__))+"/../resources"
 
-schema = avro.schema.parse(open(dataDir+"/schemas/user.schema").read())
+schemasAndFiles = {
+                    "jsonString.schema":["test1.json"],
+                    "user.schema":["userTest.json"]
+                  }
+
 
 inputFolder = dataDir+"/in"
-for (dirpath, dirnames, filename) in walk(dataDir+"/in"):
-    for fd in filename:
+for schemaFile,files in schemasAndFiles.iteritems():
+    schema = avro.schema.parse(open(dataDir+"/schemas/"+schemaFile).read())
+    for fd in files:
         base = os.path.splitext(fd)[0]
         writer = DataFileWriter(open(dataDir+"/out/"+base+".avro","w"), DatumWriter(), schema)
         with open(inputFolder+"/"+fd,'r') as fd:
